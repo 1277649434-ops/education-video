@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>君朗教育黄老师学习视频站</title>
-    
-    <!-- 🚀 核心加速升级：全部替换为国内 Staticfile CDN 源 -->
-    <script src="https://cdn.staticfile.org/react/18.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdn.staticfile.org/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-    <script src="https://cdn.staticfile.org/babel-standalone/7.23.5/babel.min.js"></script>
+    <title>君朗教育黄大帅老师学习视频站</title>
+    <!-- 引入 React 和 Tailwind CSS -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.staticfile.org/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- ✨ 新增：引入 html2canvas 用于将网页元素转换为图片 ✨ -->
-    <script src="https://cdn.staticfile.org/html2canvas/1.4.1/html2canvas.min.js"></script>
-
+    <!-- 引入二维码生成库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- 引入 html2canvas 用于生成海报图片 -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
     <style>
         /* 保持原有的炫酷动画样式 */
         @keyframes blob {
@@ -33,6 +33,20 @@
         }
         .animate-float { animation: float-symbol 6s ease-in-out infinite; }
         
+        /* 原子旋转动画 */
+        @keyframes atom-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-spin-slow { animation: atom-spin 20s linear infinite; }
+        .animate-spin-reverse { animation: atom-spin 25s linear infinite reverse; }
+
+        /* 波动动画 */
+        @keyframes dash {
+            to { stroke-dashoffset: -1000; }
+        }
+        .animate-dash {
+            stroke-dasharray: 20;
+            animation: dash 10s linear infinite;
+        }
+
         .glass-card:hover {
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -64,7 +78,6 @@
         }
         .animate-bounce-custom { animation: bounce-custom 2s infinite; }
 
-        /* 打印样式优化 */
         @media print {
             body * { visibility: hidden; }
             #qr-poster, #qr-poster * { visibility: visible; }
@@ -89,26 +102,25 @@
     const videosData = [
         {
             id: 1,
-            title: "三年级：长方形的长宽比",
-            date: "2025-11-11",
-            desc: "长方形长宽展开与折叠的折点分布规律。",
-            // 请填入 GitHub Issues 拖拽生成的 .mp4 链接
+            title: "测试一",
+            date: "2023-10-20",
+            desc: "重点讲解元音的发音技巧，请家长监督练习。",
             url: "https://github.com/user-attachments/assets/c1e20bbc-0c81-4738-8344-98b715c043c1", 
             tag: "基础"
         },
         {
             id: 2,
-            title: "鲜花",
+            title: "第二课：古诗词朗读指导",
             date: "2023-10-25",
-            desc: "测试。",
+            desc: "注意韵律和停顿，感受诗歌的意境。",
             url: "https://www.w3schools.com/html/mov_bbb.mp4", 
             tag: "进阶"
         },
         {
             id: 3, 
-            title: "大狗熊", 
+            title: "第三课：趣味数学思维", 
             date: "2023-11-28", 
-            desc: "测试。", 
+            desc: "今天我们讲解如何用画图法解决鸡兔同笼问题，开发孩子的逻辑思维。", 
             url: "https://www.w3schools.com/html/movie.mp4", 
             tag: "数学"
         },
@@ -117,14 +129,16 @@
     // ⬆️⬆️⬆️ 配置区结束 ⬆️⬆️⬆️
     // ==========================================
 
-    // 背景数理化元素组件
+    // 背景数理化元素组件 (增强版)
     const STEMBackground = () => {
         return (
             <div className="absolute inset-0 overflow-hidden pointer-events-none select-none -z-10">
+                {/* 1. 光斑背景 */}
                 <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-600/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob"></div>
                 <div className="absolute top-[20%] right-[-10%] w-[400px] h-[400px] bg-cyan-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-2000"></div>
                 <div className="absolute bottom-[-10%] left-[20%] w-[600px] h-[600px] bg-indigo-600/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-4000"></div>
                 
+                {/* 2. 漂浮的公式 */}
                 <div className="absolute top-[15%] left-[10%] text-slate-700/30 text-4xl font-serif animate-float" style={{animationDelay: '0s'}}>E=mc²</div>
                 <div className="absolute top-[30%] right-[15%] text-slate-700/30 text-5xl font-serif animate-float" style={{animationDelay: '1.5s'}}>π</div>
                 <div className="absolute bottom-[20%] left-[15%] text-slate-700/30 text-3xl font-serif animate-float" style={{animationDelay: '3s'}}>H₂O</div>
@@ -132,18 +146,63 @@
                 <div className="absolute bottom-[10%] right-[10%] text-slate-700/30 text-4xl font-serif animate-float" style={{animationDelay: '4s'}}>sin(x)</div>
                 <div className="absolute top-[10%] right-[40%] text-slate-700/30 text-2xl font-serif animate-float" style={{animationDelay: '2.5s'}}>F=ma</div>
 
-                <div className="absolute bottom-20 left-10 opacity-20">
-                    <div className="relative w-32 h-32 flex items-center justify-center">
-                        <div className="absolute w-3 h-3 bg-cyan-400 rounded-full shadow-[0_0_10px_cyan]"></div>
-                        <div className="absolute w-full h-10 border border-cyan-500/50 rounded-[50%] animate-spin-slow"></div>
+                {/* 3. ✨ 新增：化学苯环结构 SVG (旋转) */}
+                <div className="absolute top-40 left-10 md:left-20 opacity-10 animate-spin-slow">
+                    <svg width="150" height="150" viewBox="0 0 100 100" className="text-cyan-400">
+                        {/* 六边形 */}
+                        <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="none" stroke="currentColor" strokeWidth="2" />
+                        {/* 内圈虚线圆 */}
+                        <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="4,4" />
+                        {/* 连接点 */}
+                        <circle cx="50" cy="5" r="2" fill="currentColor" />
+                        <circle cx="90" cy="25" r="2" fill="currentColor" />
+                        <circle cx="90" cy="75" r="2" fill="currentColor" />
+                        <circle cx="50" cy="95" r="2" fill="currentColor" />
+                        <circle cx="10" cy="75" r="2" fill="currentColor" />
+                        <circle cx="10" cy="25" r="2" fill="currentColor" />
+                    </svg>
+                </div>
+
+                {/* 4. ✨ 新增：物理原子轨道 SVG */}
+                <div className="absolute bottom-32 right-10 md:right-32 opacity-15">
+                    <div className="relative w-40 h-40 flex items-center justify-center">
+                        <div className="absolute w-4 h-4 bg-cyan-400 rounded-full shadow-[0_0_15px_cyan] z-10"></div>
+                        {/* 轨道 1 */}
+                        <div className="absolute w-full h-12 border border-cyan-500/60 rounded-[50%] animate-spin-slow"></div>
+                        {/* 轨道 2 */}
+                        <div className="absolute w-full h-12 border border-cyan-500/60 rounded-[50%] animate-spin-reverse rotate-60"></div>
+                        {/* 轨道 3 */}
+                        <div className="absolute w-full h-12 border border-cyan-500/60 rounded-[50%] animate-spin-slow rotate-120" style={{animationDuration: '15s'}}></div>
+                        {/* 电子 */}
+                        <div className="absolute w-2 h-2 bg-white rounded-full animate-spin-slow origin-[80px_center]" style={{top: 'calc(50% - 1px)', left: 'calc(50% - 80px)'}}></div>
                     </div>
                 </div>
 
-                <div className="absolute top-20 right-20 opacity-10">
-                    <svg width="100" height="100" viewBox="0 0 100 100" className="animate-spin-slow duration-[20s]">
-                        <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="none" stroke="currentColor" strokeWidth="2" className="text-white"/>
+                {/* 5. ✨ 新增：物理波形图 (底部背景) */}
+                <div className="absolute bottom-0 left-0 w-full h-48 opacity-5">
+                    <svg width="100%" height="100%" preserveAspectRatio="none">
+                        <path d="M0,25 Q100,100 200,25 T400,25 T600,25 T800,25 T1000,25 T1200,25 V100 H0 Z" 
+                              fill="none" stroke="cyan" strokeWidth="2" className="animate-dash" />
+                        <path d="M0,50 Q150,0 300,50 T600,50 T900,50 T1200,50" 
+                              fill="none" stroke="blue" strokeWidth="2" strokeDasharray="10,10" />
                     </svg>
                 </div>
+
+                {/* 6. ✨ 新增：浮动微粒 (模拟化学反应) */}
+                {[...Array(8)].map((_, i) => (
+                    <div 
+                        key={i}
+                        className="absolute rounded-full bg-white/10 animate-float"
+                        style={{
+                            width: Math.random() * 8 + 4 + 'px',
+                            height: Math.random() * 8 + 4 + 'px',
+                            top: Math.random() * 80 + 10 + '%',
+                            left: Math.random() * 90 + 5 + '%',
+                            animationDuration: Math.random() * 10 + 10 + 's',
+                            animationDelay: Math.random() * 5 + 's'
+                        }}
+                    ></div>
+                ))}
             </div>
         );
     }
@@ -154,9 +213,7 @@
         const [toastMsg, setToastMsg] = React.useState(null);
         const [showQR, setShowQR] = React.useState(false); 
         const [welcomeState, setWelcomeState] = React.useState('visible');
-        
-        // ✨ 新增：用于存储生成的整张海报图片 URL ✨
-        const [posterImgUrl, setPosterImgUrl] = React.useState(null);
+        const [isDownloading, setIsDownloading] = React.useState(false);
 
         React.useEffect(() => {
             const params = new URLSearchParams(window.location.search);
@@ -170,10 +227,8 @@
             return () => { clearTimeout(timer1); clearTimeout(timer2); };
         }, []);
 
-        // 🟢 核心逻辑：自动生成整张图片海报
         React.useEffect(() => {
-            if (showQR && selectedVideo && !posterImgUrl) {
-                // 1. 先生成二维码
+            if (showQR && selectedVideo) {
                 const container = document.getElementById("qrcode-container");
                 if (container) {
                     container.innerHTML = "";
@@ -186,29 +241,9 @@
                         colorLight : "#ffffff",
                         correctLevel : QRCode.CorrectLevel.H
                     });
-
-                    // 2. 延迟一点点时间（等待二维码渲染完成），然后截图
-                    setTimeout(() => {
-                        const posterNode = document.getElementById("qr-poster-node");
-                        if(posterNode) {
-                            html2canvas(posterNode, {
-                                scale: 2, // 2倍清晰度
-                                useCORS: true, // 允许跨域图片
-                                backgroundColor: '#ffffff', // 确保背景是白的
-                                width: 320, // 强制宽度防止错位
-                                windowWidth: 320
-                            }).then(canvas => {
-                                setPosterImgUrl(canvas.toDataURL("image/png"));
-                            }).catch(err => {
-                                console.error("海报生成失败", err);
-                                setToastMsg("海报生成失败，请重试");
-                                setTimeout(() => setToastMsg(null), 2000);
-                            });
-                        }
-                    }, 500);
                 }
             }
-        }, [showQR, selectedVideo, posterImgUrl]);
+        }, [showQR, selectedVideo]);
 
         const openVideo = (video) => {
             setSelectedVideo(video);
@@ -218,14 +253,9 @@
 
         const closeVideo = () => {
             setSelectedVideo(null);
-            closeQR(); // 关闭视频时也关闭海报
+            setShowQR(false);
             const newUrl = window.location.pathname;
             window.history.pushState({path: newUrl}, '', newUrl);
-        };
-
-        const closeQR = () => {
-            setShowQR(false);
-            setPosterImgUrl(null); // 关闭时清空图片缓存，以便下次重新生成
         };
 
         const handleShare = () => {
@@ -252,6 +282,32 @@
                 setTimeout(() => setToastMsg(null), 3000);
             }).catch(() => {
                 setToastMsg("复制失败，请手动复制地址栏");
+                setTimeout(() => setToastMsg(null), 3000);
+            });
+        };
+
+        const handleDownloadPoster = () => {
+            setIsDownloading(true);
+            const element = document.getElementById("qr-poster-card");
+            if (!element) return;
+
+            html2canvas(element, {
+                useCORS: true,
+                scale: 2,
+                backgroundColor: "#ffffff",
+                logging: false
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `君朗教育_${selectedVideo.title}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+                setIsDownloading(false);
+                setToastMsg("海报保存成功！🎉");
+                setTimeout(() => setToastMsg(null), 3000);
+            }).catch(err => {
+                console.error(err);
+                setIsDownloading(false);
+                setToastMsg("保存失败，请尝试截图");
                 setTimeout(() => setToastMsg(null), 3000);
             });
         };
@@ -323,21 +379,21 @@
                 </header>
 
                 {/* 主要内容区 */}
-                <main className="max-w-6xl mx-auto px-4 py-12 flex-grow">
-                    <div className="mb-10 text-center md:text-left relative">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">知识改变命运 🚀</h2>
+                <main className="max-w-6xl mx-auto px-2 md:px-4 py-8 md:py-12 flex-grow">
+                    <div className="mb-8 md:mb-10 text-center md:text-left relative px-2">
+                        <h2 className="text-2xl md:text-4xl font-bold text-white mb-3">知识改变命运 🚀</h2>
                         <div className="h-1 w-20 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full mb-3 mx-auto md:mx-0"></div>
-                        <p className="text-slate-400 max-w-2xl">
+                        <p className="text-slate-400 text-sm md:text-base max-w-2xl">
                             这里存放了黄老师精心录制的数理化重点难点解析。保持好奇心，探索科学的奥秘。
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                         {filteredVideos.map((video, index) => (
                             <div 
                                 key={video.id} 
                                 onClick={() => openVideo(video)}
-                                className="glass-card rounded-2xl overflow-hidden cursor-pointer group transition-all duration-500 relative flex flex-col"
+                                className="glass-card rounded-xl md:rounded-2xl overflow-hidden cursor-pointer group transition-all duration-500 relative flex flex-col"
                                 style={{animationDelay: `${index * 100}ms`}}
                                 onMouseEnter={(e) => {
                                     const v = e.currentTarget.querySelector('video');
@@ -351,7 +407,7 @@
                                     }
                                 }}
                             >
-                                {/* 封面图区域 (自动播放 MP4 预览) */}
+                                {/* 封面图区域 */}
                                 <div className="aspect-video bg-slate-800 relative overflow-hidden">
                                     <div className="absolute inset-0 opacity-20 z-0" 
                                          style={{backgroundImage: 'radial-gradient(circle, #38bdf8 1px, transparent 1px)', backgroundSize: '20px 20px'}}>
@@ -360,32 +416,40 @@
                                     <video 
                                         src={`${video.url}#t=0.5`} 
                                         className="w-full h-full object-cover relative z-10"
-                                        preload="metadata"
+                                        preload="auto"
                                         muted
                                         playsInline
                                         style={{pointerEvents: 'none'}}
+                                        onLoadedData={(e) => { e.target.currentTime = 0.5; }}
                                     />
 
-                                    {/* 播放按钮遮罩 */}
                                     <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity z-20 flex items-center justify-center pointer-events-none">
                                         <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-110 transition-transform">
                                             <div className="w-0 h-0 border-t-[8px] border-t-transparent border-l-[14px] border-l-slate-900 border-b-[8px] border-b-transparent ml-1"></div>
                                         </div>
                                     </div>
                                     
-                                    <span className="absolute top-3 left-3 z-30 px-2.5 py-1 rounded-md text-xs font-bold bg-cyan-500/80 backdrop-blur-md text-white shadow-sm">
+                                    <span className="absolute top-2 left-2 md:top-3 md:left-3 z-30 px-2 py-0.5 md:px-2.5 md:py-1 rounded md:rounded-md text-[10px] md:text-xs font-bold bg-cyan-500/80 backdrop-blur-md text-white shadow-sm">
                                         {video.tag}
                                     </span>
                                 </div>
 
-                                <div className="p-5 flex-grow flex flex-col justify-between border-t border-white/5 bg-[#1e293b]/30">
+                                <div className="p-3 md:p-5 flex-grow flex flex-col justify-between border-t border-white/5 bg-[#1e293b]/30">
                                     <div>
-                                        <h3 className="font-bold text-lg text-white group-hover:text-cyan-400 transition-colors line-clamp-1 mb-2">{video.title}</h3>
-                                        <p className="text-slate-400 text-sm line-clamp-2 h-10 mb-4">{video.desc}</p>
+                                        <h3 className="font-bold text-sm md:text-lg text-white group-hover:text-cyan-400 transition-colors line-clamp-2 md:line-clamp-1 mb-1 md:mb-2 leading-tight">
+                                            {video.title}
+                                        </h3>
+                                        <p className="text-slate-400 text-xs md:text-sm line-clamp-2 h-8 md:h-10 mb-2 md:mb-4 leading-relaxed">
+                                            {video.desc}
+                                        </p>
                                     </div>
-                                    <div className="flex items-center justify-between text-xs text-slate-500 pt-3 border-t border-dashed border-white/10">
-                                        <span className="flex items-center gap-1">🕒 {video.date}</span>
-                                        <span className="group-hover:translate-x-1 transition-transform text-cyan-400 font-medium flex items-center gap-1">
+                                    
+                                    <div className="flex items-center justify-between text-xs text-slate-500 pt-2 md:pt-3 border-t border-dashed border-white/10 relative">
+                                        <span className="text-4xl md:text-4xl font-black text-white/5 italic absolute -bottom-1 left-0 select-none pointer-events-none">
+                                            {(index + 1).toString().padStart(2, '0')}
+                                        </span>
+                                        <span></span>
+                                        <span className="group-hover:translate-x-1 transition-transform text-cyan-400 font-medium flex items-center gap-1 scale-90 md:scale-100 origin-right">
                                             进入课堂 →
                                         </span>
                                     </div>
@@ -413,8 +477,8 @@
                         
                         <div className="relative w-full max-w-5xl bg-[#1e293b] rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden border border-white/10 flex flex-col max-h-[90vh] animate-scale-up" onClick={e => e.stopPropagation()}>
                             
-                            <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-[#0f172a] shrink-0">
-                                <h2 className="text-lg md:text-xl font-bold text-white flex items-center gap-2 truncate">
+                            <div className="px-4 md:px-6 py-3 md:py-4 border-b border-white/5 flex justify-between items-center bg-[#0f172a] shrink-0">
+                                <h2 className="text-base md:text-xl font-bold text-white flex items-center gap-2 truncate pr-4">
                                     <span className="text-cyan-400">▶</span> {selectedVideo.title}
                                 </h2>
                                 <button onClick={closeVideo} className="text-slate-400 hover:text-white transition-colors text-xl">✕</button>
@@ -424,7 +488,7 @@
                                 <video controls autoPlay src={selectedVideo.url} className="w-full h-full object-contain"></video>
                             </div>
                             
-                            <div className="p-6 bg-[#1e293b] overflow-y-auto">
+                            <div className="p-4 md:p-6 bg-[#1e293b] overflow-y-auto">
                                 <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
                                     <div className="flex items-center gap-3">
                                         <span className="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
@@ -433,18 +497,18 @@
                                         <span className="text-slate-500 text-sm">{selectedVideo.date}</span>
                                     </div>
                                     
-                                    <div className="flex gap-2">
+                                    <div className="flex gap-2 w-full md:w-auto">
                                         <button 
                                             onClick={() => setShowQR(true)}
-                                            className="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white border border-white/10 transition-all flex items-center gap-2 text-sm font-medium"
+                                            className="flex-1 md:flex-none px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white border border-white/10 transition-all flex items-center justify-center gap-2 text-sm font-medium"
                                         >
-                                            📱 生成海报
+                                            📱 海报
                                         </button>
                                         <button 
                                             onClick={handleShare}
-                                            className="px-5 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-500/30 transition-all flex items-center gap-2 text-sm font-medium"
+                                            className="flex-1 md:flex-none px-5 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-500/30 transition-all flex items-center justify-center gap-2 text-sm font-medium"
                                         >
-                                            🔗 复制链接
+                                            🔗 链接
                                         </button>
                                     </div>
                                 </div>
@@ -462,63 +526,42 @@
 
                 {/* 📱 二维码海报弹窗 */}
                 {showQR && selectedVideo && (
-                    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in" onClick={closeQR}>
-                        <div 
-                            className="bg-transparent rounded-2xl max-w-sm w-full text-center relative animate-scale-up" 
-                            onClick={e => e.stopPropagation()}
-                        >
-                            {/* 关闭按钮 - 移到右上角外面防止被图片遮挡 */}
-                            <button onClick={closeQR} className="absolute top-[-10px] right-[-10px] text-slate-500 hover:text-slate-800 z-50 p-2 bg-white rounded-full shadow-lg">✕</button>
-
-                            {/* 1. 真实的 HTML 结构 (用于生成图片，生成完后隐藏) */}
-                            {/* 设置固定宽度 width: 320px 以确保文字换行和布局一致，防止错位 */}
-                            <div 
-                                id="qr-poster-node" 
-                                className={`bg-white text-slate-900 rounded-2xl p-8 shadow-2xl relative overflow-hidden ${posterImgUrl ? 'hidden' : 'block'}`}
-                                style={{ width: '320px', margin: '0 auto' }} 
-                            >
-                                <div className="absolute top-[-50px] left-[-50px] w-32 h-32 bg-cyan-100 rounded-full opacity-50"></div>
-                                <div className="absolute bottom-[-30px] right-[-30px] w-24 h-24 bg-blue-100 rounded-full opacity-50"></div>
-                                <div className="relative z-10 flex flex-col items-center">
-                                    <h3 className="text-sm font-bold text-slate-500 tracking-widest uppercase mb-2">君朗教育</h3>
-                                    <h2 className="text-xl font-bold text-slate-800 mb-6 border-b-2 border-slate-100 pb-4 w-full">
-                                        黄老师学习视频站
-                                    </h2>
-                                    
-                                    {/* 课程名称区 - 移除“正在学习”标签 */}
-                                    <div className="bg-slate-50 p-4 rounded-xl mb-6 w-full border border-slate-100">
-                                        <p className="text-md font-bold text-cyan-700 leading-relaxed text-center" style={{wordBreak: 'break-word'}}>
-                                            {selectedVideo.title}
-                                        </p>
-                                    </div>
-
-                                    {/* 二维码容器 */}
-                                    <div className="p-3 bg-white rounded-xl shadow-lg border border-slate-100 mb-2">
+                    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in" onClick={() => setShowQR(false)}>
+                        <div id="qr-poster-card" className="bg-white text-slate-900 rounded-2xl p-6 md:p-8 max-w-sm w-full text-center shadow-2xl relative overflow-hidden animate-scale-up" onClick={e => e.stopPropagation()}>
+                            <button onClick={() => setShowQR(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 z-10 text-xl" data-html2canvas-ignore="true">✕</button>
+                            <div className="absolute top-[-50px] left-[-50px] w-32 h-32 bg-cyan-100 rounded-full opacity-50"></div>
+                            <div className="absolute bottom-[-30px] right-[-30px] w-24 h-24 bg-blue-100 rounded-full opacity-50"></div>
+                            <div className="relative z-10">
+                                <h3 className="text-sm font-bold text-slate-500 tracking-widest uppercase mb-1">君朗教育</h3>
+                                <h2 className="text-xl font-bold text-slate-800 mb-6 border-b border-slate-100 pb-4">
+                                    黄老师学习视频站
+                                </h2>
+                                <div className="bg-slate-50 p-3 rounded-lg mb-6">
+                                    <p className="text-xs text-slate-400 mb-1">正在学习</p>
+                                    <p className="text-md font-bold text-cyan-700 line-clamp-2">{selectedVideo.title}</p>
+                                </div>
+                                <div className="flex justify-center mb-4">
+                                    <div className="p-3 bg-white rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.1)] border border-slate-100">
                                         <div id="qrcode-container"></div>
                                     </div>
-                                    
-                                    <p className="text-[10px] text-slate-400 mt-2 tracking-wider">长按识别二维码观看</p>
+                                </div>
+                                <p className="text-xs text-slate-400 mb-6">长按保存图片或直接扫码观看</p>
+                                <div className="flex gap-2" data-html2canvas-ignore="true">
+                                    <button 
+                                        onClick={handleDownloadPoster}
+                                        disabled={isDownloading}
+                                        className="flex-1 py-2.5 rounded-lg bg-cyan-600 text-white text-sm font-medium hover:bg-cyan-500 transition-colors disabled:opacity-50"
+                                    >
+                                        {isDownloading ? "生成中..." : "💾 保存图片"}
+                                    </button>
+                                    <button 
+                                        onClick={() => setShowQR(false)}
+                                        className="flex-1 py-2.5 rounded-lg bg-slate-100 text-slate-600 text-sm font-medium hover:bg-slate-200 transition-colors"
+                                    >
+                                        关闭
+                                    </button>
                                 </div>
                             </div>
-
-                            {/* 2. 生成后的图片展示区 & 下载按钮 */}
-                            {posterImgUrl && (
-                                <div className="relative flex flex-col items-center">
-                                    <img src={posterImgUrl} alt="课程海报" className="w-full rounded-2xl shadow-2xl mb-4" />
-                                    
-                                    <div className="flex gap-3">
-                                        <a 
-                                            href={posterImgUrl} 
-                                            download={`君朗教育-${selectedVideo.title}.png`}
-                                            className="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2 rounded-full text-sm font-medium shadow-lg transition-colors flex items-center gap-2 no-underline"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            <span>⬇️</span> 下载海报
-                                        </a>
-                                    </div>
-                                    <p className="text-white/70 text-xs mt-3">手机端也可长按图片保存</p>
-                                </div>
-                            )}
                         </div>
                     </div>
                 )}
