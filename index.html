@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>君朗教育黄老师学习视频站</title>
-    <!-- 引入 React 和 Tailwind CSS -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- 🚀 核心加速升级：全部替换为国内 Staticfile CDN 源 -->
+    <script src="https://cdn.staticfile.org/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/7.23.5/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入二维码生成库 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.staticfile.org/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- ✨ 新增：引入 html2canvas 用于将网页元素转换为图片 ✨ -->
+    <script src="https://cdn.staticfile.org/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
         /* 保持原有的炫酷动画样式 */
         @keyframes blob {
@@ -61,6 +64,7 @@
         }
         .animate-bounce-custom { animation: bounce-custom 2s infinite; }
 
+        /* 打印样式优化 */
         @media print {
             body * { visibility: hidden; }
             #qr-poster, #qr-poster * { visibility: visible; }
@@ -85,18 +89,18 @@
     const videosData = [
         {
             id: 1,
-            title: "第一课：基础发音练习",
-            date: "2025-11-28",
-            desc: "长方形长与宽展开与折叠的规律。",
+            title: "三年级：长方形的长宽比",
+            date: "2025-11-11",
+            desc: "长方形长宽展开与折叠的折点分布规律。",
             // 请填入 GitHub Issues 拖拽生成的 .mp4 链接
             url: "https://github.com/user-attachments/assets/c1e20bbc-0c81-4738-8344-98b715c043c1", 
             tag: "基础"
         },
         {
             id: 2,
-            title: "小鲜花",
+            title: "鲜花",
             date: "2023-10-25",
-            desc: "注意韵律和停顿，感受诗歌的意境。",
+            desc: "测试。",
             url: "https://www.w3schools.com/html/mov_bbb.mp4", 
             tag: "进阶"
         },
@@ -104,7 +108,7 @@
             id: 3, 
             title: "大狗熊", 
             date: "2023-11-28", 
-            desc: "今天我们讲解如何用画图法解决鸡兔同笼问题，开发孩子的逻辑思维。", 
+            desc: "测试。", 
             url: "https://www.w3schools.com/html/movie.mp4", 
             tag: "数学"
         },
@@ -150,6 +154,9 @@
         const [toastMsg, setToastMsg] = React.useState(null);
         const [showQR, setShowQR] = React.useState(false); 
         const [welcomeState, setWelcomeState] = React.useState('visible');
+        
+        // ✨ 新增：用于存储生成的整张海报图片 URL ✨
+        const [posterImgUrl, setPosterImgUrl] = React.useState(null);
 
         React.useEffect(() => {
             const params = new URLSearchParams(window.location.search);
@@ -163,8 +170,10 @@
             return () => { clearTimeout(timer1); clearTimeout(timer2); };
         }, []);
 
+        // 🟢 核心逻辑：自动生成整张图片海报
         React.useEffect(() => {
-            if (showQR && selectedVideo) {
+            if (showQR && selectedVideo && !posterImgUrl) {
+                // 1. 先生成二维码
                 const container = document.getElementById("qrcode-container");
                 if (container) {
                     container.innerHTML = "";
@@ -177,9 +186,29 @@
                         colorLight : "#ffffff",
                         correctLevel : QRCode.CorrectLevel.H
                     });
+
+                    // 2. 延迟一点点时间（等待二维码渲染完成），然后截图
+                    setTimeout(() => {
+                        const posterNode = document.getElementById("qr-poster-node");
+                        if(posterNode) {
+                            html2canvas(posterNode, {
+                                scale: 2, // 2倍清晰度
+                                useCORS: true, // 允许跨域图片
+                                backgroundColor: '#ffffff', // 确保背景是白的
+                                width: 320, // 强制宽度防止错位
+                                windowWidth: 320
+                            }).then(canvas => {
+                                setPosterImgUrl(canvas.toDataURL("image/png"));
+                            }).catch(err => {
+                                console.error("海报生成失败", err);
+                                setToastMsg("海报生成失败，请重试");
+                                setTimeout(() => setToastMsg(null), 2000);
+                            });
+                        }
+                    }, 500);
                 }
             }
-        }, [showQR, selectedVideo]);
+        }, [showQR, selectedVideo, posterImgUrl]);
 
         const openVideo = (video) => {
             setSelectedVideo(video);
@@ -189,9 +218,14 @@
 
         const closeVideo = () => {
             setSelectedVideo(null);
-            setShowQR(false);
+            closeQR(); // 关闭视频时也关闭海报
             const newUrl = window.location.pathname;
             window.history.pushState({path: newUrl}, '', newUrl);
+        };
+
+        const closeQR = () => {
+            setShowQR(false);
+            setPosterImgUrl(null); // 关闭时清空图片缓存，以便下次重新生成
         };
 
         const handleShare = () => {
@@ -428,28 +462,63 @@
 
                 {/* 📱 二维码海报弹窗 */}
                 {showQR && selectedVideo && (
-                    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in" onClick={() => setShowQR(false)}>
-                        <div id="qr-poster" className="bg-white text-slate-900 rounded-2xl p-6 md:p-8 max-w-sm w-full text-center shadow-2xl relative overflow-hidden animate-scale-up" onClick={e => e.stopPropagation()}>
-                            <button onClick={() => setShowQR(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 z-10 text-xl">✕</button>
-                            <div className="absolute top-[-50px] left-[-50px] w-32 h-32 bg-cyan-100 rounded-full opacity-50"></div>
-                            <div className="absolute bottom-[-30px] right-[-30px] w-24 h-24 bg-blue-100 rounded-full opacity-50"></div>
-                            <div className="relative z-10">
-                                <h3 className="text-sm font-bold text-slate-500 tracking-widest uppercase mb-1">君朗教育</h3>
-                                <h2 className="text-xl font-bold text-slate-800 mb-6 border-b border-slate-100 pb-4">
-                                    黄老师学习视频站
-                                </h2>
-                                <div className="bg-slate-50 p-3 rounded-lg mb-6">
-                                    <p className="text-xs text-slate-400 mb-1">正在学习</p>
-                                    <p className="text-md font-bold text-cyan-700 line-clamp-2">{selectedVideo.title}</p>
-                                </div>
-                                <div className="flex justify-center mb-4">
-                                    <div className="p-3 bg-white rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.1)] border border-slate-100">
+                    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in" onClick={closeQR}>
+                        <div 
+                            className="bg-transparent rounded-2xl max-w-sm w-full text-center relative animate-scale-up" 
+                            onClick={e => e.stopPropagation()}
+                        >
+                            {/* 关闭按钮 - 移到右上角外面防止被图片遮挡 */}
+                            <button onClick={closeQR} className="absolute top-[-10px] right-[-10px] text-slate-500 hover:text-slate-800 z-50 p-2 bg-white rounded-full shadow-lg">✕</button>
+
+                            {/* 1. 真实的 HTML 结构 (用于生成图片，生成完后隐藏) */}
+                            {/* 设置固定宽度 width: 320px 以确保文字换行和布局一致，防止错位 */}
+                            <div 
+                                id="qr-poster-node" 
+                                className={`bg-white text-slate-900 rounded-2xl p-8 shadow-2xl relative overflow-hidden ${posterImgUrl ? 'hidden' : 'block'}`}
+                                style={{ width: '320px', margin: '0 auto' }} 
+                            >
+                                <div className="absolute top-[-50px] left-[-50px] w-32 h-32 bg-cyan-100 rounded-full opacity-50"></div>
+                                <div className="absolute bottom-[-30px] right-[-30px] w-24 h-24 bg-blue-100 rounded-full opacity-50"></div>
+                                <div className="relative z-10 flex flex-col items-center">
+                                    <h3 className="text-sm font-bold text-slate-500 tracking-widest uppercase mb-2">君朗教育</h3>
+                                    <h2 className="text-xl font-bold text-slate-800 mb-6 border-b-2 border-slate-100 pb-4 w-full">
+                                        黄老师学习视频站
+                                    </h2>
+                                    
+                                    {/* 课程名称区 - 移除“正在学习”标签 */}
+                                    <div className="bg-slate-50 p-4 rounded-xl mb-6 w-full border border-slate-100">
+                                        <p className="text-md font-bold text-cyan-700 leading-relaxed text-center" style={{wordBreak: 'break-word'}}>
+                                            {selectedVideo.title}
+                                        </p>
+                                    </div>
+
+                                    {/* 二维码容器 */}
+                                    <div className="p-3 bg-white rounded-xl shadow-lg border border-slate-100 mb-2">
                                         <div id="qrcode-container"></div>
                                     </div>
+                                    
+                                    <p className="text-[10px] text-slate-400 mt-2 tracking-wider">长按识别二维码观看</p>
                                 </div>
-                                <p className="text-xs text-slate-400 mb-6">长按保存图片或直接扫码观看</p>
-                                <button onClick={() => setShowQR(false)} className="w-full py-2.5 rounded-lg bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 transition-colors">关闭海报</button>
                             </div>
+
+                            {/* 2. 生成后的图片展示区 & 下载按钮 */}
+                            {posterImgUrl && (
+                                <div className="relative flex flex-col items-center">
+                                    <img src={posterImgUrl} alt="课程海报" className="w-full rounded-2xl shadow-2xl mb-4" />
+                                    
+                                    <div className="flex gap-3">
+                                        <a 
+                                            href={posterImgUrl} 
+                                            download={`君朗教育-${selectedVideo.title}.png`}
+                                            className="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2 rounded-full text-sm font-medium shadow-lg transition-colors flex items-center gap-2 no-underline"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <span>⬇️</span> 下载海报
+                                        </a>
+                                    </div>
+                                    <p className="text-white/70 text-xs mt-3">手机端也可长按图片保存</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
